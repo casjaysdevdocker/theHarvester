@@ -6,7 +6,7 @@ ARG DEFAULT_DATA_DIR="/usr/local/share/template-files/data" \
   DEFAULT_CONF_DIR="/usr/local/share/template-files/config" \
   DEFAULT_TEMPLATE_DIR="/usr/local/share/template-files/defaults"
 
-ARG PACK_LIST="git libffi-dev libxml2-dev libxslt-dev"
+ARG PACK_LIST="py3-pip git libffi-dev libxml2-dev libxslt-dev"
 
 ENV LANG=en_US.UTF-8 \
   ENV=ENV=~/.bashrc \
@@ -86,7 +86,7 @@ ENV LANG=en_US.UTF-8 \
 COPY --from=build /. /
 
 USER root
-WORKDIR /root
+WORKDIR /app
 
 VOLUME [ "/config","/data" ]
 
