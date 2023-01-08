@@ -6,7 +6,7 @@ ARG DEFAULT_DATA_DIR="/usr/local/share/template-files/data" \
   DEFAULT_CONF_DIR="/usr/local/share/template-files/config" \
   DEFAULT_TEMPLATE_DIR="/usr/local/share/template-files/defaults"
 
-ARG PACK_LIST="py3-pip git libffi-dev libxml2-dev libxslt-dev"
+ARG PACK_LIST="bash"
 
 ENV LANG=en_US.UTF-8 \
   ENV=ENV=~/.bashrc \
@@ -25,9 +25,7 @@ RUN set -ex; \
   echo "http://dl-cdn.alpinelinux.org/alpine/${ALPINE_VERSION}/community" >>"/etc/apk/repositories"; \
   if [ "${ALPINE_VERSION}" = "edge" ]; then echo "http://dl-cdn.alpinelinux.org/alpine/${ALPINE_VERSION}/testing" >>"/etc/apk/repositories" ; fi ; \
   apk update --update-cache && apk add --no-cache ${PACK_LIST} && \
-  python3 -m pip install --upgrade pip && \
-  git clone -q https://github.com/laramies/theHarvester /app && \
-  cd /app && python3 --version && pip3 install --no-cache-dir -r requirements.txt && chmod +x ./*.py
+  echo
 
 RUN echo 'Running cleanup' ; \
   rm -Rf /usr/share/doc/* /usr/share/info/* /tmp/* /var/tmp/* ; \
@@ -52,7 +50,7 @@ ARG \
   BUILD_VERSION="latest" \
   LICENSE="MIT" \
   IMAGE_NAME="theHarvester" \
-  BUILD_DATE="Fri Oct 21 04:58:26 PM EDT 2022" \
+  BUILD_DATE="Sun Nov 13 12:20:50 PM EST 2022" \
   TIMEZONE="America/New_York"
 
 LABEL maintainer="CasjaysDev <docker-admin@casjaysdev.com>" \
@@ -70,7 +68,8 @@ LABEL maintainer="CasjaysDev <docker-admin@casjaysdev.com>" \
   org.opencontainers.image.vcs-url="https://github.com/casjaysdevdocker/${IMAGE_NAME}" \
   org.opencontainers.image.url.source="https://github.com/casjaysdevdocker/${IMAGE_NAME}" \
   org.opencontainers.image.documentation="https://hub.docker.com/r/casjaysdevdocker/${IMAGE_NAME}" \
-  org.opencontainers.image.description="Containerized version of ${IMAGE_NAME}"
+  org.opencontainers.image.description="Containerized version of ${IMAGE_NAME}" \
+  com.github.containers.toolbox="false"
 
 ENV LANG=en_US.UTF-8 \
   ENV=~/.bashrc \
@@ -86,7 +85,7 @@ ENV LANG=en_US.UTF-8 \
 COPY --from=build /. /
 
 USER root
-WORKDIR /app
+WORKDIR /root
 
 VOLUME [ "/config","/data" ]
 
@@ -95,3 +94,4 @@ EXPOSE $EXPOSE_PORTS
 #CMD [ "" ]
 ENTRYPOINT [ "tini", "-p", "SIGTERM", "--", "/usr/local/bin/entrypoint.sh" ]
 HEALTHCHECK --start-period=1m --interval=2m --timeout=3s CMD [ "/usr/local/bin/entrypoint.sh", "healthcheck" ]
+
