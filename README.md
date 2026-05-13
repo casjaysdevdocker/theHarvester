@@ -9,28 +9,71 @@ theHarvester README
  sudo bash -c "$(curl -q -LSsf "https://github.com/systemmgr/installer/raw/main/install.sh")"
  sudo systemmgr --config && sudo systemmgr install scripts  
 ```
-
-## Get source files  
-
+  
+## Automatic install/update  
+  
 ```shell
-dockermgr download src theHarvester
+dockermgr update theHarvester
 ```
-
+  
+## Install and run container
+  
+```shell
+dockerHome="/var/lib/srv/$USER/docker/casjaysdevdocker/theHarvester/theHarvester/latest/rootfs"
+mkdir -p "/var/lib/srv/$USER/docker/theHarvester/rootfs"
+git clone "https://github.com/dockermgr/theHarvester" "$HOME/.local/share/CasjaysDev/dockermgr/theHarvester"
+cp -Rfva "$HOME/.local/share/CasjaysDev/dockermgr/theHarvester/rootfs/." "$dockerHome/"
+docker run -d \
+--restart always \
+--privileged \
+--name casjaysdevdocker-theHarvester-latest \
+--hostname theHarvester \
+-e TZ=${TIMEZONE:-America/New_York} \
+-v "$dockerHome/data:/data:z" \
+-v "$dockerHome/config:/config:z" \
+-p 80:80 \
+casjaysdevdocker/theHarvester:latest
+```
+  
+## via docker-compose  
+  
+```yaml
+version: "2"
+services:
+  ProjectName:
+    image: casjaysdevdocker/theHarvester
+    container_name: casjaysdevdocker-theHarvester
+    environment:
+      - TZ=America/New_York
+      - HOSTNAME=theHarvester
+    volumes:
+      - "/var/lib/srv/$USER/docker/casjaysdevdocker/theHarvester/theHarvester/latest/rootfs/data:/data:z"
+      - "/var/lib/srv/$USER/docker/casjaysdevdocker/theHarvester/theHarvester/latest/rootfs/config:/config:z"
+    ports:
+      - 80:80
+    restart: always
+```
+  
+## Get source files  
+  
+```shell
+dockermgr download src casjaysdevdocker/theHarvester
+```
+  
 OR
-
+  
 ```shell
 git clone "https://github.com/casjaysdevdocker/theHarvester" "$HOME/Projects/github/casjaysdevdocker/theHarvester"
 ```
-
+  
 ## Build container  
-
+  
 ```shell
 cd "$HOME/Projects/github/casjaysdevdocker/theHarvester"
 buildx 
 ```
-
+  
 ## Authors  
-
-🤖 casjay: [Github](https://github.com/casjay) [Docker](https://hub.docker.com/r/casjay) 🤖  
-📽  dockermgr: [Github](https://github.com/dockermgr) [Docker](https://hub.docker.com/r/dockermgr) 📽  
-⛵ CasjaysDev Docker: [Github](https://github.com/casjaysdevdocker) [Docker](https://hub.docker.com/r/casjaysdevdocker) ⛵  
+  
+🤖 casjay: [Github](https://github.com/casjay) 🤖  
+⛵ casjaysdevdocker: [Github](https://github.com/casjaysdevdocker) [Docker](https://hub.docker.com/u/casjaysdevdocker) ⛵  
